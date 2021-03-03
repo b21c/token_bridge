@@ -173,30 +173,31 @@ contract LockingEB21 is Pausable {
 
     event LockTokens(address indexed from, address indexed to, uint256 value);
 
-    constructor(address B21, address payable _owner) public Owned(_owner) {
+    constructor(address B21, address payable _owner, address _subAdmin) public Owned(_owner) {
 
         b21Contract = B21;
         feesAddress = _owner;
-        feesInEth = 0.1 ether;
-        feesInToken = 10;
-
+        feesInEth = 0.0001 ether;
+        feesInToken = 100000000000000000000;
+        subAdmin[_subAdmin] = true;
+        limitOnSubAdmin[_subAdmin] = 500000000000000000000000000;
     }
 
-    function setbaseFees(uint256 valueForToken, uint256 valueForEth) public whenNotPaused onlyOwner returns (bool) {
+    function setbaseFees(uint256 valueForToken, uint256 valueForEth) external whenNotPaused onlyOwner returns (bool) {
 
         feesInEth = valueForEth;
         feesInToken = valueForToken;
         return true;
     }
 
-    function addSubAdmin(address subAdminAddress, uint256 limit) public whenNotPaused onlyOwner returns (bool) {
+    function addSubAdmin(address subAdminAddress, uint256 limit) external whenNotPaused onlyOwner returns (bool) {
 
         subAdmin[subAdminAddress] = true;
-        limitOnSubAdmin[msg.sender] = limit;
+        limitOnSubAdmin[subAdminAddress] = limit;
         return true;
     }
 
-    function removeSubAdmin(address subAdminAddress) public whenNotPaused onlyOwner returns (bool) {
+    function removeSubAdmin(address subAdminAddress) external whenNotPaused onlyOwner returns (bool) {
 
         subAdmin[subAdminAddress] = false;
         return true;
@@ -230,7 +231,7 @@ contract LockingEB21 is Pausable {
 
 
     // transfer b21 tokens or others tokens to any other address
-    function transferAnyERC20Token(address tokenAddress, uint tokens, address transferTo) external whenNotPaused returns (bool success) {
+    function transferAnyERC20Token(address tokenAddress, uint256 tokens, address transferTo) external whenNotPaused returns (bool success) {
         require(msg.sender == owner || subAdmin[msg.sender]);
         if (subAdmin[msg.sender]) {
 

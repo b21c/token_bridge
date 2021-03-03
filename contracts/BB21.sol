@@ -104,15 +104,14 @@ interface IBEP20 {
 contract Context {
     // Empty internal constructor, to prevent people from mistakenly deploying
     // an instance of this contract, which should be used via inheritance.
-    constructor () internal {}
+    constructor () internal { }
 
     function _msgSender() internal view returns (address payable) {
         return msg.sender;
     }
 
     function _msgData() internal view returns (bytes memory) {
-        this;
-        // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
+        this; // silence state mutability warning without generating bytecode - see https://github.com/ethereum/solidity/issues/2691
         return msg.data;
     }
 }
@@ -340,9 +339,9 @@ contract Ownable is Context {
 contract BB21 is Context, IBEP20, Ownable {
     using SafeMath for uint256;
 
-    mapping(address => uint256) private _balances;
+    mapping (address => uint256) private _balances;
 
-    mapping(address => mapping(address => uint256)) private _allowances;
+    mapping (address => mapping (address => uint256)) private _allowances;
 
     uint256 private _totalSupply;
     uint8 private _decimals;
